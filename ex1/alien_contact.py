@@ -1,7 +1,8 @@
 from datetime import datetime
 from enum import Enum
 from typing import Optional
-from pydantic import BaseModel, Field, ValidationError, model_validator
+from pydantic import (BaseModel, Field,
+                      ValidationError, model_validator)
 
 
 class ContactType(str, Enum):
@@ -12,15 +13,22 @@ class ContactType(str, Enum):
 
 
 class AlienContact(BaseModel):
-    contact_id: str = Field(min_length=5, max_length=15)
-    timestamp: datetime
-    location: str = Field(min_length=3, max_length=100)
-    contact_type: ContactType
-    signal_strength: float = Field(ge=0.0, le=10.0)
-    duration_minutes: int = Field(ge=1, le=1440)
-    witness_count: int = Field(ge=1, le=100)
-    message_received: Optional[str] = Field(default=None, max_length=500)
-    is_verified: bool = False
+    contact_id: str = Field("ISS001", min_length=5, max_length=15,
+                            description="station_id take 5<string<15")
+    timestamp: datetime = Field(datetime.now(),
+                                description="DateTime of contact")
+    location: str = Field("khoribga", min_length=3, max_length=100,
+                          description="location must be str and 3-100 chars")
+    contact_type: ContactType = Field(..., description="contact type")
+    signal_strength: float = Field(5.0, ge=0.0, le=10.0,
+                                   description=" signal is Float 0.0-10.0")
+    duration_minutes: int = Field(800, ge=1, le=1440,
+                                  description="duration is Integer, 1-1440")
+    witness_count: int = Field(50, ge=1, le=100,
+                               description=" witness is Integer 1-100 people")
+    message_received: Optional[str] = Field(default=None, max_length=500,
+                                            description="opt str max 500 char")
+    is_verified: bool = Field(default=False, description="is verified boolean")
 
     @model_validator(mode="after")
     def check_rules(self):
@@ -45,7 +53,7 @@ class AlienContact(BaseModel):
 
 def main() -> None:
     print("Alien Contact Log Validation")
-    print("=" * 38)
+    print("======================================")
 
     try:
         contact = AlienContact(
@@ -72,7 +80,7 @@ def main() -> None:
         print("Expected validation error:")
         print(e.errors()[0]["msg"])
 
-    print("\n" + "=" * 38)
+    print("\n======================================")
 
     try:
         AlienContact(
