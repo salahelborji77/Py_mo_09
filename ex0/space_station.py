@@ -42,7 +42,6 @@ def main() -> None:
         print(f"Crew: {station.crew_size} people")
         print(f"Power: {station.power_level}%")
         print(f"Oxygen: {station.oxygen_level}%")
-        print(f"last main = {station.last_maintenance}")
         value = 'Operational' if station.is_operational else 'Offline'
         print(f"Status: {value}")
 
